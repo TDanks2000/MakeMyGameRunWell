@@ -1,0 +1,8 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "dev.makemygamerunwell.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": ["OptionsScreenMixin", "MinecraftMixin"],
+  "injectors": {"defaultRequire": 1}
+}

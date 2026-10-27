@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "makemygamerunwell",
+  "version": "${version}",
+  "name": "Make My Game Run Well",
+  "description": "One-click hardware-aware performance settings, with restore.",
+  "environment": "client",
+  "license": "MIT",
+  "icon": "assets/makemygamerunwell/icon.png",
+  "authors": ["Make My Game Run Well contributors"],
+  "mixins": ["makemygamerunwell.mixins.json"],
+  "depends": {"fabricloader": ">=${fabric_loader_min}", "fabric-api": ">=${fabric_api_min}", "minecraft": ">=${minecraft_min} <${minecraft_below}", "java": ">=25"}
+}

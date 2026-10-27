@@ -1,0 +1,25 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="MIT"
+[[mods]]
+modId="makemygamerunwell"
+version="${version}"
+displayName="Make My Game Run Well"
+authors="Make My Game Run Well contributors"
+logoFile="assets/makemygamerunwell/icon.png"
+iconFile="assets/makemygamerunwell/icon.png"
+description='''One-click hardware-aware performance settings, with restore.'''
+[[mixins]]
+config="makemygamerunwell.mixins.json"
+[[dependencies.makemygamerunwell]]
+modId="neoforge"
+type="required"
+versionRange="[${neoforge_version},)"
+ordering="NONE"
+side="CLIENT"
+[[dependencies.makemygamerunwell]]
+modId="minecraft"
+type="required"
+versionRange="[${minecraft_min},${minecraft_below})"
+ordering="NONE"
+side="CLIENT"

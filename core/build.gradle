@@ -1,0 +1,8 @@
+dependencies {
+    // Minecraft ships Gson, so it is only needed at compile and test time.
+    compileOnly 'com.google.code.gson:gson:2.14.0'
+    testImplementation 'com.google.code.gson:gson:2.14.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.12.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+test { useJUnitPlatform() }

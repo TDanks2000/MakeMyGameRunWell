@@ -1,0 +1,45 @@
+// Opt-in client integration test. Never included in ordinary distributable builds.
+sourceSets.main.java.srcDir rootProject.file('smoke/java')
+tasks.named('processResources') {
+    filesMatching('makemygamerunwell.mixins.json') {
+        filter { line -> line.replace('"MinecraftMixin"]', '"MinecraftMixin", "SmokeMixin", "SmokeFrameMixin", "SmokeSaveMixin"]') }
+    }
+}
+tasks.named('jar') { doFirst { throw new GradleException('Build distributable jars without -PsmokeTest') } }
+tasks.matching { it.name == 'runClient' }.configureEach {
+    doFirst {
+        // Every run starts from the same state: no result, no configuration, no backup, no world.
+        project.file('run-smoke/smoke-result.txt').delete()
+        project.file('run-smoke/config/makemygamerunwell.json').delete()
+        project.delete(project.file('run-smoke/config/makemygamerunwell'), project.file('run-smoke/saves'))
+        // A fresh game directory opens the accessibility onboarding screen instead of the title screen the test waits for.
+        def options = project.file('run-smoke/options.txt')
+        options.parentFile.mkdirs()
+        options.text = options.exists()
+            ? options.text.replaceAll(/onboardAccessibility:true/, 'onboardAccessibility:false')
+            : 'onboardAccessibility:false\n'
+        if (loader == 'neoforge') {
+            // Upstream cosmetic metadata warnings otherwise block the unattended test at a dialog.
+            def config = project.file('run-smoke/config/neoforge-client.toml')
+            config.parentFile.mkdirs()
+            config.text = config.exists()
+                ? config.text.replaceAll(/showLoadWarnings\s*=\s*true/, 'showLoadWarnings = false')
+                : 'showLoadWarnings = false\n'
+        }
+    }
+    doLast {
+        def result = project.file('run-smoke/smoke-result.txt')
+        if (!result.exists() || !result.text.startsWith('PASS:')) {
+            throw new GradleException(result.exists() ? result.text : 'Client exited before the smoke test completed')
+        }
+    }
+}
+// -PcompatTest[=profile] adds the upstream mods fetched by scripts/fetch_compat_mods.py; the default profile is "base".
+if (providers.gradleProperty('compatTest').isPresent()) {
+    def profile = providers.gradleProperty('compatTest').get() ?: 'base'
+    def mods = rootProject.file(".bootstrap/compat/${profile}/${minecraft_version}/${loader}")
+    dependencies { runtimeOnly fileTree(dir: mods, include: '*.jar') }
+    tasks.matching { it.name == 'runClient' }.configureEach {
+        doFirst { if (!mods.isDirectory() || mods.list().length == 0) throw new GradleException("No mods in ${mods}; run scripts/fetch_compat_mods.py ${profile}") }
+    }
+}

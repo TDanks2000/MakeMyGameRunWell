@@ -1,0 +1,24 @@
+pluginManagement {
+    repositories {
+        maven { url = 'https://maven.fabricmc.net/' }
+        maven { url = 'https://maven.neoforged.net/releases' }
+        gradlePluginPortal()
+    }
+}
+rootProject.name = 'MakeMyGameRunWell'
+include 'core'
+
+// Every directory under versions/ with a version.properties becomes a :fabric-<version> and :neoforge-<version>
+// project, built by loaders/<loader>/build.gradle from the shared sources plus that version's own src/.
+file('versions').listFiles()
+        .findAll { new File(it, 'version.properties').isFile() }
+        .sort { it.name }
+        .each { versionDir ->
+            ['fabric', 'neoforge'].each { loader ->
+                def name = "${loader}-${versionDir.name}"
+                include name
+                project(":${name}").projectDir = new File(versionDir, loader)
+                project(":${name}").buildFileName = "../../../loaders/${loader}/build.gradle"
+                project(":${name}").projectDir.mkdirs()
+            }
+        }

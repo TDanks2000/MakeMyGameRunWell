@@ -1,0 +1,14 @@
+plugins { id 'net.neoforged.moddev' }
+neoForge {
+    version = neoforge_version
+    runs { client { client() } }
+    mods { makemygamerunwell { sourceSet sourceSets.main } }
+}
+if (providers.gradleProperty('smokeTest').isPresent()) {
+    neoForge.runs.client.gameDirectory = file('run-smoke')
+}
+processResources {
+    def properties = [version: project.version, minecraft_min: minecraft_min, minecraft_below: minecraft_below, neoforge_version: neoforge_version]
+    inputs.properties properties
+    filesMatching('META-INF/neoforge.mods.toml') { expand properties }
+}

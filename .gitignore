@@ -1,0 +1,11 @@
+.gradle/
+.bootstrap/
+**/build/
+**/run/
+**/run-smoke/
+.idea/
+*.iml
+.vscode/
+.claude/
+*.log
+.DS_Store
